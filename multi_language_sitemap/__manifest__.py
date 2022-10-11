@@ -12,7 +12,7 @@
     'category': 'Website',
     'version': '15.0.1.0.0',
     'license': 'OPL-1',
-    'images': ['static/description/thumbnail.gif']
+    'images': ['static/description/thumbnail.gif'],
     'depends': [
         'base',
         'http_routing',
