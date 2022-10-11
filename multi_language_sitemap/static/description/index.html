@@ -1,19 +1,14 @@
-<h1>Description</h1>
-Multilanguage Articles did not get added to the sitemap. Therefore you will not rank for your translated blog content. 
+<h1>Add multilanguage blogs to the sitemap</h1>
+<b>Problem:</b> Multilanguage Articles did not get added to the sitemap. Therefore you will not rank for your translated blog content. 
 
 Example: Create a blog in your primary language and translate the blog article into a different language. 
 
-
-<h1>Context</h1>
-Version: Odoo V15
-Database URL: example.odoo.com
-Existing customization: No
-App-Name: TBC
-
-<h1>Business need</h1>
+<h2>Business need</h2>
 You cannot generate visitors for your translated blog articles because SEO will not know that this article exists in the first place.
 
-<h1>Functional specification</h1>
+<h3>Functional specification</h3>
 After installing the App, a new sitemap with the existing blog articles gets created based on the configuration in the scheduled actions. 
+
+
 
 Go to the scheduled actions and configure the update interval. After that, activate the schedule action “Create sitemap”. Finally, run the sitemap manually for the first time and check your new generated sitemap: /sitemap.xml
