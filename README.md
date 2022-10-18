@@ -1,2 +1,2 @@
 # odooapps
-Free Odoo Apps2
+Free Odoo Apps
