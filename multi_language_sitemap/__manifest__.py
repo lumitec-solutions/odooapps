@@ -15,7 +15,6 @@
     'images': ['static/description/thumbnail.gif'],
     'depends': [
         'base',
-        'http_routing',
         'website',
     ],
     'data': [
