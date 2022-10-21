@@ -17,7 +17,7 @@ class Lead(models.Model):
 
     def _compute_can_set_double_opt_in(self):
         for record in self:
-            if record.user_has_groups('mypatent_crm_lead_token.can_manually_set_double_opt_in_lead'):
+            if record.user_has_groups('lt_double_opt_in.can_manually_set_double_opt_in_lead'):
                 record.can_manually_set_double_opt_in = True
             else:
                 record.can_manually_set_double_opt_in = False
@@ -44,7 +44,7 @@ class Lead(models.Model):
 
     def unlink(self):
         for record in self:
-            lead_token = self.env['crm.lead.token'].search([('lead_id', '=', record.id)])
+            lead_token = self.env['crm.lead.token'].sudo().search([('lead_id', '=', record.id)])
             if lead_token:
                 lead_token.unlink()
         return super(Lead, self).unlink()
@@ -54,7 +54,7 @@ class Lead(models.Model):
             return
         for tag in self.tag_ids:
             if tag.send_double_opt_in:
-                template = self.env.ref('mypatent_crm_lead_token.mypatent_double_opt_in_email_template')
+                template = self.env.ref('lt_double_opt_in.mypatent_double_opt_in_email_template')
                 template.send_mail(self.id, force_send=True)
                 return
 
