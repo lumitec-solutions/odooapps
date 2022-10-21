@@ -16,6 +16,7 @@ class Website(Home):
     def sitemap_xml_index(self, **kwargs):
         current_website = request.website
         Attachment = request.env['ir.attachment'].sudo()
+        View = request.env['ir.ui.view'].sudo()
         mimetype = 'application/xml;charset=utf-8'
         content = None
         dom = [('url', '=', '/sitemap-%d.xml' % current_website.id),
