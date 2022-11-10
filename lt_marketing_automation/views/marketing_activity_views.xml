@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="marketing_activity_new_slide" model="ir.ui.view">
+            <field name="name">marketing.form.slide</field>
+            <field name="model">marketing.activity</field>
+            <field name="inherit_id"
+                   ref="marketing_automation.marketing_activity_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='server_action_id']"
+                       position="before">
+                    <field name="course_template_id"
+                           attrs="{'invisible': [('activity_type', '!=', 'course')], 'required':  [('activity_type', '=', 'course')]}"/>
+                    <field name="channel_id"
+                           attrs="{'invisible': [('activity_type', '!=', 'course')], 'required':  [('activity_type', '=', 'course')]}"/>
+                    <field name="channel_url"
+                           attrs="{'invisible': [('activity_type', '!=', 'course')], 'required':  [('activity_type', '=', 'course')]}"/>
+                    <field name="survey_template_id"
+                           attrs="{'invisible': [('activity_type', '!=', 'survey')]}"/>
+                    <field name="survey_id"
+                           attrs="{'invisible': [('activity_type', '!=', 'survey')]}"/>
+                    <field name="survey_url" widget="url"
+                           attrs="{'invisible': [('activity_type', '!=', 'survey')]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
