@@ -17,7 +17,7 @@ class WebsiteVisitor(models.Model):
         """Override the search"""
         for arg in args:
             if arg == ['set_duration', '=', True]:
-                bot_duration = int(self.env['ir.config_parameter'].sudo().get_param('website.visitors.duration',0))
+                bot_duration = int(self.env['ir.config_parameter'].sudo().get_param('website.visitors.live.duration',0))
                 if bot_duration:
                     arg[0] = 'duration'
                     arg[1] = '>'
@@ -51,7 +51,7 @@ class WebsiteVisitor(models.Model):
 
     def _cron_archive_bots(self):
         """Archive website visitors if they are bots"""
-        bot_duration = int(self.env['ir.config_parameter'].sudo().get_param('website.visitors.duration'))
+        bot_duration = int(self.env['ir.config_parameter'].sudo().get_param('website.visitors.live.duration'))
         if bot_duration:
             visitors_to_archive = self.env['website.visitor'].sudo().search([('duration', '<', bot_duration)])
             visitors_to_archive.write({'active': False})
