@@ -27,6 +27,7 @@ class WebsiteVisitor(models.Model):
 
     @api.model
     def fields_get(self, fields=None, attributes=None):
+        """Remove this boolean field from the filter"""
         hide = ['set_duration']
         res = super(WebsiteVisitor, self).fields_get(fields,
                                                         attributes=attributes)
@@ -37,6 +38,7 @@ class WebsiteVisitor(models.Model):
 
     @api.depends('last_connection_datetime')
     def compute_duration(self):
+        """compute duration based on last_connection_datetime and create_date"""
         for rec in self:
             rec.duration = 0.0
             if rec.active and rec.last_connection_datetime:
@@ -48,6 +50,7 @@ class WebsiteVisitor(models.Model):
                 rec.set_duration = True
 
     def _cron_archive_bots(self):
+        """Archive website visitors if they are bots"""
         bot_duration = int(self.env['ir.config_parameter'].sudo().get_param('website.visitors.duration'))
         if bot_duration:
             visitors_to_archive = self.env['website.visitor'].sudo().search([('duration', '<', bot_duration)])

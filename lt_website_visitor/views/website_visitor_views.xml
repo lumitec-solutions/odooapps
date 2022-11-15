@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="website.website_visitor_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='product_ids']" position="after">
-                <field name="duration"/>
+                <field name="duration" invisible="1"/>
             </xpath>
         </field>
     </record>>

@@ -15,6 +15,7 @@ class WebsiteVisitor(Home):
     @http.route(['/website/update_visitor_last_connection'], type='json',
                 auth="public", website=True)
     def update_visitor_last_connection(self):
+        """Update last_connection_datetime based on scrolling the website"""
         visitor_sudo = request.env['website.visitor']._get_visitor_from_request()
         if visitor_sudo:
             visitor_sudo.write({'last_connection_datetime': datetime.now()})
