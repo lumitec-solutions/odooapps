@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ir_cron_add_duration" model="ir.cron">
+        <field name="name">Website Visitors: Archive visitors if they are bots</field>
+        <field name="model_id" ref="model_website_visitor"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_archive_bots()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+    </record>
+</odoo>
