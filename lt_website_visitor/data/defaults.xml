@@ -5,5 +5,9 @@
             <field name="key">website.visitors.live.duration</field>
             <field name="value" type="int">3</field>
         </record>
+        <record model="ir.config_parameter" id="website_visitors">
+            <field name="key">website.visitor.live.days</field>
+            <field name="value" type="int">30</field>
+        </record>
     </data>
 </odoo>
