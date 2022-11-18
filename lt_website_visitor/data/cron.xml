@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="ir_cron_add_duration" model="ir.cron">
+    <record id="ir_cron_archive_bot_visitors" model="ir.cron">
         <field name="name">Website Visitors: Archive visitors if they are bots</field>
         <field name="model_id" ref="model_website_visitor"/>
         <field name="state">code</field>
