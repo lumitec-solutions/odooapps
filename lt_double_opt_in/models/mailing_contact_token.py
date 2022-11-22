@@ -48,6 +48,7 @@ class MailingToken(models.Model):
             record.token_generation_date = fields.Date.today()
 
     def get_url(self):
+        """For getting the url"""
         if not self.access_token:
             ValidationError(
                 _('The mailing.contact.token must have set a access token for get the url.'))
@@ -56,6 +57,7 @@ class MailingToken(models.Model):
 
     @api.model
     def cron_delete_token(self, months=2, days=0):
+        """Scheduled action for deleting the token"""
         deletion_date = date.today() - relativedelta(months=months, days=days)
         records = self.search([('token_generation_date', '<', deletion_date)])
         records.unlink()

@@ -12,9 +12,10 @@ class Lead(models.Model):
 
     @api.model
     def create(self, vals):
+        """merge the created leads with mailing contacts"""
         record = super(Lead, self).create(vals)
         if record.email_from:
-            mailing_contacts = self.env['mailing.contact'].search([('email', '=', record.email_from)], limit=1)
+            mailing_contacts = self.env['mailing.contact'].sudo().search([('email', '=', record.email_from)])
             for mailing_contact in mailing_contacts:
                 if record.country_id:
                     mailing_contact.country_id = record.country_id
@@ -29,10 +30,11 @@ class Lead(models.Model):
         return record
 
     def write(self, vals):
+        """merge the leads with mailing contacts based on changes"""
         res = super(Lead, self).write(vals)
         for record in self:
             if record.email_from:
-                mailing_contacts = self.env['mailing.contact'].search(
+                mailing_contacts = self.env['mailing.contact'].sudo().search(
                     [('email', '=', record.email_from)])
                 for mailing_contact in mailing_contacts:
                     if 'country_id' in vals:

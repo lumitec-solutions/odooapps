@@ -29,6 +29,7 @@ class MailingContact(models.Model):
 
     @api.model
     def create(self, vals):
+        """Send double opt-in mail when creates a record"""
         record = super(MailingContact, self).create(vals)
         if record.category_ids and record.email:
             record.send_double_opt_in_email()
@@ -36,6 +37,7 @@ class MailingContact(models.Model):
         return record
 
     def write(self, vals):
+        """send double opt-in mail when updates a record"""
         res = super(MailingContact, self).write(vals)
         if 'email' in vals:
             for record in self:
@@ -48,6 +50,7 @@ class MailingContact(models.Model):
         return res
 
     def unlink(self):
+        """Deletes token when deleting the record"""
         for record in self:
             mailing_token = self.env['mailing.contact.token'].sudo().search(
                 [('mailing_contact_id', '=', record.id)])
@@ -56,6 +59,7 @@ class MailingContact(models.Model):
         return super(MailingContact, self).unlink()
 
     def send_double_opt_in_email(self):
+        """Send double opt-in mail"""
         if self.double_opt_in or not self.email:
             return
         conf_send_double_opt_in = self.env['ir.config_parameter'].sudo().get_param(
@@ -68,6 +72,7 @@ class MailingContact(models.Model):
                 return
 
     def generate_access_token(self, action):
+        """creates access token"""
         mailing_contact_token = self.env['mailing.contact.token'].create({
             'mailing_contact_id': self.id,
             'action': action,
