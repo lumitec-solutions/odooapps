@@ -6,7 +6,7 @@
 ##############################################################################
 {
     'name': 'Double Opt-In',
-    'summary': 'Double Opt-In Logic in leads',
+    'summary': 'Double Opt-In Logic in Mailing Contacts',
     'author': "lumitec GmbH",
     'website': "https://www.lumitec.solutions",
     'category': 'Website',
@@ -15,17 +15,19 @@
     'depends': [
         'base',
         'mail',
+        'mass_mailing',
         'crm',
         'website',
     ],
     'data': [
-        'data/mypatent_crm_lead_token_cron.xml',
-        'data/mypatent_crm_lead_token_mail_data.xml',
+        'data/cron.xml',
+        'data/mailing_contact_token_mail_data.xml',
         'security/ir.model.access.csv',
         'security/res_groups.xml',
-        'views/mypatent_crm_lead_token_templates.xml',
-        'views/crm_lead_tag_views.xml',
-        'views/crm_lead_views.xml',
+        'views/res_config_settings_views.xml',
+        'views/mailing_contact_token_templates.xml',
+        'views/mailing_tag_views.xml',
+        'views/mailing_contact_views.xml'
     ],
     'installable': True,
     'application': False,

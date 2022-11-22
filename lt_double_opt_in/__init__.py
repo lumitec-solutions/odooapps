@@ -4,5 +4,5 @@
 #
 # See LICENSE file for full licensing details.
 ##############################################################################
-from . import models
 from . import controllers
+from . import models
