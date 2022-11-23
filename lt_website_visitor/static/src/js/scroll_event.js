@@ -6,6 +6,14 @@ odoo.define('lt_website_visitor.scroll_page', function (require) {
         start: function () {
             var self = this;
             var timer = 0;
+            console.log("START")
+            self._rpc({
+                route: '/website/update_visitor_last_connection',
+                params: {
+                },
+            }).then(function (res) {
+                console.log("Updated")
+            });
             this._onScroll = function (ev) {
                 timer++;
                 console.log("timer================", timer)
