@@ -8,7 +8,7 @@ odoo.define('lt_website_visitor.scroll_page', function (require) {
             var timer = 0;
             this._onScroll = function (ev) {
                 timer++;
-                if(timer == 50){
+                if(timer == 35){
                     self._rpc({
                         route: '/website/update_visitor_last_connection',
                         params: {
