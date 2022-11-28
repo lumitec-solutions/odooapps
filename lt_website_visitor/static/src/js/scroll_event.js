@@ -5,23 +5,29 @@ odoo.define('lt_website_visitor.scroll_page', function (require) {
         selector: '#wrapwrap',
         start: function () {
             var self = this;
-            var timer = 0;
+            var lastScrollTop = 0;
+            var lastScrollLeft = 0;
             self._rpc({
                 route: '/website/update_visitor_last_connection',
                 params: {
                 },
             });
             this._onScroll = function (ev) {
-                timer++;
-                console.log("timer--------", timer)
-                if(timer == 35){
-                    self._rpc({
-                        route: '/website/update_visitor_last_connection',
-                        params: {
-                        },
-                    }).then(function (res) {
-                        timer = 0;
-                    });
+                if(ev.target){
+                    var currentScrollTop = ev.target.scrollTop;
+                    var currentScrollLeft = ev.target.scrollLeft;
+                    var top_difference = Math.abs(currentScrollTop - lastScrollTop);
+                    var left_difference = Math.abs(currentScrollLeft - lastScrollLeft);
+                    console.log("difference--------", top_difference)
+                    if(top_difference >= 10 || left_difference >= 10){
+                        self._rpc({
+                            route: '/website/update_visitor_last_connection',
+                            params: {
+                            },
+                        });
+                        lastScrollTop = currentScrollTop
+                        lastScrollLeft = currentScrollLeft
+                    }
                 }
             };
             window.addEventListener('scroll', this._onScroll, true);
