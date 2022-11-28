@@ -120,13 +120,6 @@ class MailingContact(models.Model):
             mailing_contact = self.with_context(active_test=False).search(
                 [('email', '=', email)], limit=1, order='id desc')
 
-        # Get categories
-        # tags = self._resolve_2many_commands('category_ids', vals.get('category_ids', []),
-        #                                     fields=['id'])
-        # tag_ids = set(tag['id'] for tag in tags)
-        # tags = self.env['crm.tag'].browse(tag_ids)
-
-        # If tag merge flag is set update already existing mailing_contact instead of creating a new one
         if not mailing_contact:
             return False
 
