@@ -32,6 +32,13 @@ class MarketingSlideLink(models.Model):
         'mail.template', 'Survey template', index=True,
         domain="[('model', '=', 'survey.user_input')]")
 
+    @api.onchange('activity_type')
+    def onchange_activity_type(self):
+        for rec in self:
+            if rec.model_id.model != 'res.partner' and (rec.activity_type == 'course' or rec.activity_type == 'survey'):
+                raise AccessError(
+                    _('This Activity Type is only for the Contact Model.'))
+
     @api.depends('survey_id')
     def _compute_survey_url(self):
         for rec in self:
@@ -111,28 +118,6 @@ class MarketingSlideLink(models.Model):
             if model == 'res.partner':
                 valid_partners = self.env['res.partner'].search([]).filtered(
                     lambda x: x.id in res_ids)
-            elif model == 'sale.order':
-                sale_orders = self.env['sale.order'].search([]).filtered(
-                    lambda x: x.id in res_ids)
-                for order in sale_orders:
-                    if order.partner_id:
-                        valid_partners |= order.partner_id
-            elif model == 'crm.lead':
-                leads = self.env['crm.lead'].search([]).filtered(
-                    lambda x: x.id in res_ids)
-                for lead in leads:
-                    if lead.partner_id:
-                        valid_partners |= lead.partner_id
-                    elif lead.contact_id:
-                        valid_partners |= lead.contact_id
-                    else:
-                        create_partner = self.env['res.partner'].create({
-                            'name': lead.contact_name,
-                            'email': lead.email_from,
-                            'lead_id': lead.id,
-                        })
-                        valid_partners |= create_partner
-
             course_invite = self.env['slide.channel.invite'].create({
                 'channel_id': self.channel_id.id,
                 'partner_ids': valid_partners.ids,
@@ -141,6 +126,7 @@ class MarketingSlideLink(models.Model):
                     (6, 0, self.course_template_id.attachment_ids.ids)],
             })
             course_invite.action_invite()
+
     def _execute_survey(self, traces):
         if not self.env.is_superuser() and not self.user_has_groups(
                 'marketing_automation.group_marketing_automation_user'):
@@ -203,27 +189,6 @@ class MarketingSlideLink(models.Model):
             if model == 'res.partner':
                 valid_partners = self.env['res.partner'].search([]).filtered(
                     lambda x: x.id in res_ids)
-            elif model == 'sale.order':
-                sale_orders = self.env['sale.order'].search([]).filtered(
-                    lambda x: x.id in res_ids)
-                for order in sale_orders:
-                    if order.partner_id:
-                        valid_partners |= order.partner_id
-            elif model == 'crm.lead':
-                leads = self.env['crm.lead'].search([]).filtered(
-                    lambda x: x.id in res_ids)
-                for lead in leads:
-                    if lead.partner_id:
-                        valid_partners |= lead.partner_id
-                    elif lead.contact_id:
-                        valid_partners |= lead.contact_id
-                    else:
-                        create_partner = self.env['res.partner'].create({
-                            'name': lead.contact_name,
-                            'email': lead.email_from,
-                            'lead_id': lead.id,
-                        })
-                        valid_partners |= create_partner
             survey_invite = self.env['survey.invite'].create({
                 'survey_id': self.survey_id.id,
                 'survey_start_url': self.survey_url,

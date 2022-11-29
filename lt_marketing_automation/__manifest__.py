@@ -14,12 +14,14 @@
     'license': 'OPL-1',
     'depends': [
         'base',
+        'contacts',
         'website_slides',
         'marketing_automation',
         'survey',
     ],
     'data': [
         'data/mail_template_data.xml',
+        'data/website_data.xml',
         'views/slide_channel_views.xml',
         'views/marketing_activity_views.xml',
         'views/website_slide_templates.xml',

@@ -51,7 +51,13 @@ class WebsiteSaleSlides(WebsiteSlides):
         if partner_token:
             return request.redirect('/slides/%s/%s' % (slug(channel), partner_token))
         else:
-            raise werkzeug.exceptions.NotFound()
+            fail_page = request.env.ref(
+                'lt_marketing_automation.slide_redirect_fail').sudo()
+            if not fail_page or not fail_page.is_published:
+                raise ValidationError(
+                    _('Only Attendees can view the course'))
+            return werkzeug.utils.redirect(fail_page.url or '/')
+            # raise werkzeug.exceptions.NotFound()
 
     @http.route([
         '/slides/<model("slide.channel"):channel>/<string:token>',
