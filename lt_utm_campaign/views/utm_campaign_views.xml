@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="marketing_campaign_action_campaign" model="ir.actions.act_window">
+        <field name="name">Marketing Campaigns</field>
+        <field name="res_model">marketing.campaign</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_id" ref="marketing_automation.marketing_campaign_view_kanban"/>
+        <field name="context">{'search_default_utm_campaign_id': active_id}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a campaign
+            </p>
+        </field>
+    </record>
+
+    <record id="marketing_campaign_view_search" model="ir.ui.view">
+        <field name="name">marketing.campaign.view.search</field>
+        <field name="model">marketing.campaign</field>
+        <field name="inherit_id" ref="marketing_automation.marketing_campaign_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='model_id']" position="after">
+                <field name="utm_campaign_id" string="UTM Campaign"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="marketing_utm_campaign_view_form" model="ir.ui.view">
+        <field name="name">utm.campaign.view.form</field>
+        <field name="model">utm.campaign</field>
+        <field name="inherit_id" ref="utm.utm_campaign_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="create_link_tracker" type="object" class="oe_highlight" string="Create Link Tracker"/>
+<!--                <button name="create_automation" type="object" class="oe_highlight" string="Create Automation"/>-->
+            </xpath>
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <button name="action_view_projects"
+                    type="object" class="oe_stat_button order-1" icon="fa-puzzle-piece">
+                    <field name="project_count" widget="statinfo" string="Projects"/>
+                </button>
+                <button name="action_view_meetings"
+                    type="object" class="oe_stat_button order-1" icon="fa-calendar">
+                    <field name="meeting_count" widget="statinfo" string="Meetings"/>
+                </button>
+                <button name="action_view_events"
+                    type="object" class="oe_stat_button order-1" icon="fa-ticket">
+                    <field name="event_count" widget="statinfo" string="Events"/>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="deadline_date"/>
+                <field name="budget"/>
+                <field name="link_count" invisible="1"/>
+<!--                <field name="marketing_campaign_count" invisible="1"/>-->
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Links" attrs="{'invisible': [('link_count', '=', 0)]}">
+                    <field name="link_ids" readonly="1" nolabel="1">
+                        <tree>
+                            <field name="create_date"/>
+                            <field name="title"/>
+                            <field name="url"/>
+                            <field name="short_url"/>
+                            <field name="count"/>
+                        </tree>
+                    </field>
+                </page>
+<!--                <page string="Marketing campaigns" attrs="{'invisible': [('marketing_campaign_count', '=', 0)]}">-->
+<!--                    <field name="marketing_campaign_ids" readonly="1" nolabel="1">-->
+<!--                        <tree>-->
+<!--                            <field name="name"/>-->
+<!--                            <field name="model_id"/>-->
+<!--                            <field name="state"/>-->
+<!--                            <field name="mass_mailing_count"/>-->
+<!--                            <field name="link_tracker_click_count"/>-->
+<!--                            <field name="total_participant_count"/>-->
+<!--                        </tree>-->
+<!--                    </field>-->
+<!--                </page>-->
+            </xpath>
+        </field>
+    </record>
+
+    <record id="marketing_utm_campaign_view_search" model="ir.ui.view">
+        <field name="name">utm.campaign.view.search</field>
+        <field name="model">utm.campaign</field>
+        <field name="inherit_id" ref="utm.view_utm_campaign_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group/filter[@name='group_user_id']" position="after">
+                <filter string="Campaign" name="group_campaign_name"
+                        context="{'group_by': 'name'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="marketing_utm_campaign_view_kanban">
+        <field name="name">utm.campaign.view.kanban</field>
+        <field name="model">utm.campaign</field>
+        <field name="inherit_id" ref="utm.utm_campaign_view_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='click_count']" position="after">
+                <field name="deadline_date"/>
+                <field name="deadline_date_formatted"/>
+                <field name="link_ids"/>
+<!--                <field name="marketing_campaign_ids"/>-->
+            </xpath>
+            <xpath expr="//ul[@id='o_utm_actions']">
+                <a name="%(link_tracker.link_tracker_action_campaign)d" type="action" t-attf-class="oe_mailings #{record.link_ids.raw_value.length === 0 ? 'text-muted' : ''}">
+                    <t t-raw="record.link_ids.raw_value.length"/> Links
+                </a>
+<!--                <a name="%(marketing_campaign_action_campaign)d" type="action" t-attf-class="oe_mailings #{record.marketing_campaign_ids.raw_value.length === 0 ? 'text-muted' : ''}">-->
+<!--                    <t t-raw="record.marketing_campaign_ids.raw_value.length"/> Marketing Campaigns-->
+<!--                </a>-->
+            </xpath>
+            <xpath expr="//div[@id='utm_statistics']" position="inside">
+                <t t-set="date_format" t-value="'MM/DD/YY'"/>
+                <t t-set="date" t-value=""/>
+                <!-- color of the span -->
+                <t t-if="record.deadline_date.raw_value and moment(record.deadline_date.raw_value.toISOString()).startOf('day') lt moment().startOf('day')">
+                    <t t-set="deadline_class" t-value="'oe_kanban_text_red'"/>
+                </t>
+                <t t-elif="record.deadline_date.raw_value and moment(record.deadline_date.raw_value.toISOString()).startOf('day') lt moment().endOf('day')">
+                    <t t-set="deadline_class" t-value="'text-warning font-weight-bold'"/>
+                </t>
+                <!-- Date value -->
+                <t t-if="record.deadline_date.raw_value" t-set="date" t-value="record.deadline_date_formatted.raw_value"/>
+                <span name="date" t-attf-class="#{deadline_class || ''}"><t t-esc="date"/></span>
+            </xpath>
+        </field>
+    </record>
+</odoo>
