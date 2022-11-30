@@ -14,8 +14,6 @@ class MailingContact(models.Model):
     category_ids = fields.Many2many('mailing.tag', string='Mailing Tags')
     double_opt_in = fields.Boolean(string='Double Opt-In', readonly=True,
                                    copy=False)
-    mail_opt_in = fields.Boolean(string='Mail Opt-In', readonly=True,
-                                 copy=False)
     can_manually_set_double_opt_in = fields.Boolean(
         "Can Manually Set Double Opt In",
         compute="_compute_can_set_double_opt_in")
@@ -38,7 +36,6 @@ class MailingContact(models.Model):
         record = super(MailingContact, self).create(vals)
         if record.category_ids and record.email:
             record.send_double_opt_in_email()
-            record.mail_opt_in = True
         return record
 
     def write(self, vals):
@@ -49,9 +46,7 @@ class MailingContact(models.Model):
                 record.double_opt_in = False
         if 'category_ids' in vals or 'email' in vals:
             for record in self:
-                if not record.mail_opt_in:
-                    record.send_double_opt_in_email()
-                record.mail_opt_in = False
+                record.send_double_opt_in_email()
         return res
 
     def unlink(self):
