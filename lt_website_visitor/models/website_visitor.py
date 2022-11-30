@@ -42,10 +42,12 @@ class WebsiteVisitor(models.Model):
         for rec in self:
             rec.duration = 0.0
             if rec.active and rec.last_connection_datetime:
+                date_create = rec.create_date.replace(microsecond=0)
+                date_last_connection = rec.last_connection_datetime.replace(microsecond=0)
                 if rec.last_connection_datetime >= rec.create_date:
-                    difference = rec.last_connection_datetime - rec.create_date
+                    difference = date_last_connection - date_create
                 else:
-                    difference = rec.create_date - rec.last_connection_datetime
+                    difference = date_create - date_last_connection
                 rec.duration = difference.seconds
                 rec.set_duration = True
 
