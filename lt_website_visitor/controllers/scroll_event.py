@@ -20,6 +20,6 @@ class WebsiteVisitor(Home):
         """Update last_connection_datetime based on scrolling the website"""
         visitor_sudo = request.env['website.visitor']._get_visitor_from_request()
         if visitor_sudo:
-            visitor_sudo._update_visitor_last_visit()
+            visitor_sudo.write({'last_connection_datetime': datetime.now()})
             return True
         return False
