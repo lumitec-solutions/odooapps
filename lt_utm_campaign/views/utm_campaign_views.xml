@@ -85,11 +85,10 @@
         <field name="model">utm.campaign</field>
         <field name="inherit_id" ref="utm.utm_campaign_view_kanban"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='tag_ids']" position="after">
-                <field name="deadline_date" invisible="1"/>
-                <i class="fa fa-clock-o mr-2"/>
+            <xpath expr="//field[@name='click_count']" position="after">
+                <field name="deadline_date"/>
                 <field name="deadline_date_formatted"/>
-                <field name="link_ids" invisible="1"/>
+                <field name="link_ids"/>
             </xpath>
             <xpath expr="//ul[@id='o_utm_actions']">
                 <a name="%(link_tracker.link_tracker_action_campaign)d" type="action" t-attf-class="oe_mailings #{record.link_ids.raw_value.length === 0 ? 'text-muted' : ''}">
