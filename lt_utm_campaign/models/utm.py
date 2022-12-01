@@ -5,6 +5,7 @@
 # See LICENSE file for full licensing details.
 ##############################################################################
 from odoo import fields, models, api, _
+from odoo.tools.misc import format_date
 
 
 class UtmCampaign(models.Model):
@@ -25,11 +26,7 @@ class UtmCampaign(models.Model):
     link_ids = fields.One2many('link.tracker', 'campaign_id', string='Links')
     link_count = fields.Integer('Number of Links',
                                 compute='_compute_link_count', store=True)
-    # marketing_campaign_ids = fields.One2many('marketing.campaign',
-    #                                          'utm_campaign_id',
-    #                                          string="Marketing campaigns")
-    # marketing_campaign_count = fields.Integer('Number of marketing_campaigns',
-    #                                           compute='_compute_marketing_campaign_count', store=True)
+   
 
     def _compute_project_count(self):
         for rec in self:
@@ -53,13 +50,6 @@ class UtmCampaign(models.Model):
     def _compute_link_count(self):
         for campaign in self:
             campaign.link_count = len(campaign.link_ids)
-
-    @api.depends('marketing_campaign_ids')
-    def _compute_marketing_campaign_count(self):
-        for campaign in self:
-            campaign.marketing_campaign_count = len(
-                campaign.marketing_campaign_ids)
-            print("campaign.marketing_campaign_count", campaign.marketing_campaign_count)
 
     @api.depends('deadline_date')
     def _compute_deadline_date_formatted(self):
@@ -113,15 +103,3 @@ class UtmCampaign(models.Model):
             'target': 'current',
             'context': {'default_campaign_id': self.id}
         }
-    #
-    # def create_automation(self):
-    #     """Create marketing automation using this campaign when clicking the button"""
-    #     print("sssssssssssss", self.marketing_campaign_ids)
-    #     return {
-    #         'type': 'ir.actions.act_window',
-    #         'res_model': 'marketing.campaign',
-    #         'view_type': 'form',
-    #         'view_mode': 'form',
-    #         'target': 'current',
-    #         'context': {'default_utm_campaign_id': self.id}
-    #     }

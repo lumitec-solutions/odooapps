@@ -64,18 +64,6 @@
                         </tree>
                     </field>
                 </page>
-<!--                <page string="Marketing campaigns" attrs="{'invisible': [('marketing_campaign_count', '=', 0)]}">-->
-<!--                    <field name="marketing_campaign_ids" readonly="1" nolabel="1">-->
-<!--                        <tree>-->
-<!--                            <field name="name"/>-->
-<!--                            <field name="model_id"/>-->
-<!--                            <field name="state"/>-->
-<!--                            <field name="mass_mailing_count"/>-->
-<!--                            <field name="link_tracker_click_count"/>-->
-<!--                            <field name="total_participant_count"/>-->
-<!--                        </tree>-->
-<!--                    </field>-->
-<!--                </page>-->
             </xpath>
         </field>
     </record>
@@ -97,19 +85,16 @@
         <field name="model">utm.campaign</field>
         <field name="inherit_id" ref="utm.utm_campaign_view_kanban"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='click_count']" position="after">
-                <field name="deadline_date"/>
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="deadline_date" invisible="1"/>
+                <i class="fa fa-clock-o mr-2"/>
                 <field name="deadline_date_formatted"/>
-                <field name="link_ids"/>
-<!--                <field name="marketing_campaign_ids"/>-->
+                <field name="link_ids" invisible="1"/>
             </xpath>
             <xpath expr="//ul[@id='o_utm_actions']">
                 <a name="%(link_tracker.link_tracker_action_campaign)d" type="action" t-attf-class="oe_mailings #{record.link_ids.raw_value.length === 0 ? 'text-muted' : ''}">
                     <t t-raw="record.link_ids.raw_value.length"/> Links
                 </a>
-<!--                <a name="%(marketing_campaign_action_campaign)d" type="action" t-attf-class="oe_mailings #{record.marketing_campaign_ids.raw_value.length === 0 ? 'text-muted' : ''}">-->
-<!--                    <t t-raw="record.marketing_campaign_ids.raw_value.length"/> Marketing Campaigns-->
-<!--                </a>-->
             </xpath>
             <xpath expr="//div[@id='utm_statistics']" position="inside">
                 <t t-set="date_format" t-value="'MM/DD/YY'"/>
