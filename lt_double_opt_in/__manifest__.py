@@ -10,7 +10,7 @@
     'author': "lumitec GmbH",
     'website': "https://www.lumitec.solutions",
     'category': 'Website',
-    'version': '15.0.1.0.0',
+    'version': '15.0.1.0.1',
     'license': 'OPL-1',
     'depends': [
         'base',
