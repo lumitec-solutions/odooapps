@@ -12,5 +12,17 @@
             <field name="doall" eval="False"/>
             <field name="active" eval="True"/>
         </record>
+
+        <record id="ir_cron_update_mailing_contact" model="ir.cron">
+            <field name="name">Update Mailing Contact</field>
+            <field name="model_id" ref="model_mailing_contact"/>
+            <field name="state">code</field>
+            <field name="code">model.action_update_mailing_contact()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">1</field>
+            <field name="active">True</field>
+        </record>
+
     </data>
 </odoo>

@@ -4,9 +4,11 @@
 #
 # See LICENSE file for full licensing details.
 ##############################################################################
-from . import res_config_settings
-from . import mailing_contact
-from . import mailing_contact_token
-from . import crm_lead
-from . import res_partner
-from . import res_partner_category
+
+from odoo import fields, models
+
+
+class ResPartnerCategory(models.Model):
+    _inherit = 'res.partner.category'
+
+    send_double_opt_in = fields.Boolean(string='Send Double Opt-In', copy=False)
