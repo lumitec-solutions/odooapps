@@ -209,7 +209,7 @@ class ResPartner(models.Model):
         #     if self.email == mailing_contact.email:
         #         for tag in tags:
         #             mailing_contact.write({'category_ids': [(4, tag)]})
-        mailing_contact = self.env['mailing.contact'].sudo().search([('email', '=', self.email)], limit=1)
+        mailing_contact = self.env['mailing.contact'].sudo().search([('email', '=', self.email)])
         if self.email == mailing_contact.email:
             if vals:
                 tags = []
