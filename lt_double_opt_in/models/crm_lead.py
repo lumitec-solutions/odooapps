@@ -36,7 +36,7 @@ class Lead(models.Model):
             #         })
             #         tags.append(new_tags.id)
             if email not in mailing_contact.mapped(lambda self: self.email):
-                self.env['mailing.contact'].create({
+                self.env['mailing.contact'].sudo().create({
                     'email': email,
                     'company_name': vals.get('partner_name'),
                     'name': vals.get('partner_id'),

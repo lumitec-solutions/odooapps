@@ -172,7 +172,7 @@ class ResPartner(models.Model):
                     tags.append(tag_value)
             company_name = self.browse(vals.get('partent_id')).name
             if email not in mailing_contact.mapped(lambda self: self.email):
-                self.env['mailing.contact'].create({
+                self.env['mailing.contact'].sudo().create({
                     'email': vals.get('email', False),
                     'company_name': company_name if vals.get('parent_id') else vals.get('name'),
                     'name': vals.get('name'),
