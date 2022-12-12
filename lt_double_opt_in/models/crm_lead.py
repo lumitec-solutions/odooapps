@@ -76,7 +76,6 @@ class Lead(models.Model):
 
                 for tag in tags:
                     mailing_contact.write({'category_ids': [(4, tag)]})
-                print(self.email_from,self,vals,'ddddddddddddddddd',mailing_contact,mailing_contact.tag_ids,self.read())
         return super(Lead, self).write(vals)
 
     # def _resolve_2many_commands(self, field_name, commands, fields=None):
