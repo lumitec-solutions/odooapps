@@ -55,7 +55,8 @@ class Lead(models.Model):
         return super(Lead, self).create(vals)
 
     def write(self, vals):
-        mailing_contact = self.env['mailing.contact'].sudo().search([])
+        self.ensure_one()
+        mailing_contact = self.env['mailing.contact'].sudo().search([('email', '=', self.email_from)])
         if vals:
             if self.email_from in mailing_contact.mapped(lambda self: self.email):
                 if vals.get('tag_ids'):
@@ -75,8 +76,8 @@ class Lead(models.Model):
                         #     })
                         #     tags.append(new_tags.id)
 
-                for tag in tags:
-                    mailing_contact.write({'category_ids': [(4, tag)]})
+                    for tag in tags:
+                        mailing_contact.write({'category_ids': [(4, tag)]})
         return super(Lead, self).write(vals)
 
     # def _resolve_2many_commands(self, field_name, commands, fields=None):
