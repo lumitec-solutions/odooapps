@@ -168,7 +168,7 @@ class ResPartner(models.Model):
             tags = []
             for tag in partner_tags:
                 if (self.env['mailing.tag'].search([('name', '=', tag.name)]).name == tag.name):
-                    tag_value = self.env['mailing.tag'].search([('name', '=', tag.name)]).id
+                    tag_value = self.env['mailing.tag'].sudo().search([('name', '=', tag.name)]).id
                     tags.append(tag_value)
             company_name = self.browse(vals.get('partent_id')).name
             if email not in mailing_contact.mapped(lambda self: self.email):
@@ -195,8 +195,21 @@ class ResPartner(models.Model):
     #     return res
 
     def write(self, vals):
-        mailing_contact = self.env['mailing.contact'].search([('email', '=', self.email)], limit=1)
-        print(vals,'ffffffffffffffffffffffffffffffffffffff')
+        # mailing_contact = self.env['mailing.contact'].sudo().search([('email', '=', self.email)], limit=1)
+        # if vals.get('category_id'):
+        #     partner_tag_ids = vals.get('category_id')[0][2]
+        #     partner_tags = self.env['res.partner.category'].browse(partner_tag_ids)
+        #     tags = []
+        #     for tag in partner_tags:
+        #         tag_value_id = self.env['mailing.tag'].search([('name', '=', tag.name)])
+        #         if (tag_value_id.name == tag.name) and (tag_value_id.id not in mailing_contact.tag_ids.ids):
+        #             tag_value = tag_value_id.id
+        #             print(tags, 'ssssssssssss', tag_value)
+        #             tags.append(tag_value)
+        #     if self.email == mailing_contact.email:
+        #         for tag in tags:
+        #             mailing_contact.write({'category_ids': [(4, tag)]})
+        mailing_contact = self.env['mailing.contact'].sudo().search([('email', '=', self.email)], limit=1)
         if self.email == mailing_contact.email:
             if vals:
                 tags = []

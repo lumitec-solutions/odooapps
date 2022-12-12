@@ -25,7 +25,7 @@ class Lead(models.Model):
             crm_tags = self.env['crm.tag'].browse(crm_tag_ids)
             tags = []
             for tag in crm_tags:
-                if (self.env['mailing.tag'].search([('name', '=', tag.name)]).name == tag.name):
+                if (self.env['mailing.tag'].sudo().search([('name', '=', tag.name)]).name == tag.name):
                     tag_value = self.env['mailing.tag'].search([('name', '=', tag.name)]).id
                     print(tags, 'ssssssssssss', tag_value)
                     tags.append(tag_value)
@@ -61,7 +61,7 @@ class Lead(models.Model):
             crm_tags = self.env['crm.tag'].browse(crm_tag_ids)
             tags = []
             for tag in crm_tags:
-                tag_value_id = self.env['mailing.tag'].search([('name', '=', tag.name)])
+                tag_value_id = self.env['mailing.tag'].sudo().search([('name', '=', tag.name)])
                 if (tag_value_id.name == tag.name) and (tag_value_id.id not in mailing_contact.category_ids.ids):
                     tag_value = tag_value_id.id
                     print(tags, 'ssssssssssss', tag_value)
