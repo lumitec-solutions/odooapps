@@ -20,7 +20,7 @@ class Lead(models.Model):
     def create(self, vals):
         email = vals.get('email_from', False)
         mailing_contact = self.env['mailing.contact'].search([('email', '=', email)], limit=1)
-        if vals.get('tag_ids')[0][2]:
+        if vals.get('tag_ids')[0][0] == 6:
             crm_tag_ids = vals.get('tag_ids')[0][2]
             crm_tags = self.env['crm.tag'].browse(crm_tag_ids)
             tags = []
