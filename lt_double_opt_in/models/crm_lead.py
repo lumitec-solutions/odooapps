@@ -55,9 +55,8 @@ class Lead(models.Model):
         return super(Lead, self).create(vals)
 
     def write(self, vals):
-        self.ensure_one()
-        mailing_contact = self.env['mailing.contact'].sudo().search([('email', '=', self.email_from)])
         if vals:
+            mailing_contact = self.env['mailing.contact'].sudo().search([('email', '=', self.email_from)])
             if self.email_from in mailing_contact.mapped(lambda self: self.email):
                 if vals.get('tag_ids'):
                     crm_tag_ids = vals.get('tag_ids')[0][2]
