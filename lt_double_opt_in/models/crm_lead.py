@@ -20,28 +20,29 @@ class Lead(models.Model):
     def create(self, vals):
         email = vals.get('email_from', False)
         mailing_contact = self.env['mailing.contact'].search([('email', '=', email)], limit=1)
-        crm_tag_ids = vals.get('tag_ids')[0][2]
-        crm_tags = self.env['crm.tag'].browse(crm_tag_ids)
-        tags = []
-        for tag in crm_tags:
-            if (self.env['res.partner.category'].search([('name', '=', tag.name)]).name == tag.name):
-                tag_value = self.env['res.partner.category'].search([('name', '=', tag.name)]).id
-                print(tags, 'ssssssssssss', tag_value)
-                tags.append(tag_value)
-        # for tag in crm_tags:
-            elif (self.env['res.partner.category'].search([('name', '=', tag.name)]).name != tag.name):
-                new_tags = self.env['res.partner.category'].create({
-                    'name': tag.name
+        if vals.get('tag_ids')[0][2]:
+            crm_tag_ids = vals.get('tag_ids')[0][2]
+            crm_tags = self.env['crm.tag'].browse(crm_tag_ids)
+            tags = []
+            for tag in crm_tags:
+                if (self.env['res.partner.category'].search([('name', '=', tag.name)]).name == tag.name):
+                    tag_value = self.env['res.partner.category'].search([('name', '=', tag.name)]).id
+                    print(tags, 'ssssssssssss', tag_value)
+                    tags.append(tag_value)
+            # for tag in crm_tags:
+                elif (self.env['res.partner.category'].search([('name', '=', tag.name)]).name != tag.name):
+                    new_tags = self.env['res.partner.category'].create({
+                        'name': tag.name
+                    })
+                    tags.append(new_tags.id)
+            if email != mailing_contact.email:
+                self.env['mailing.contact'].create({
+                    'email': email,
+                    'company_name': vals.get('partner_name'),
+                    'name': vals.get('partner_id'),
+                    'country_id': vals.get('country_id'),
+                    'tag_ids': tags
                 })
-                tags.append(new_tags.id)
-        if email != mailing_contact.email:
-            self.env['mailing.contact'].create({
-                'email': email,
-                'company_name': vals.get('partner_name'),
-                'name': vals.get('partner_id'),
-                'country_id': vals.get('country_id'),
-                'tag_ids': tags
-            })
 
         # Merge new lead if it have set the merge flag and already a lead with this email exists
         # lead = self._merge_lead_with_existing_lead(vals)
