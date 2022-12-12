@@ -55,7 +55,7 @@ class Lead(models.Model):
         return super(Lead, self).create(vals)
 
     def write(self, vals):
-        mailing_contact = self.env['mailing.contact'].sudo().search([('email', '=', self.email_from)], limit=1)
+        mailing_contact = self.env['mailing.contact'].sudo().search([('email', '=', self.email_from)])
         if vals.get('tag_ids'):
             crm_tag_ids = vals.get('tag_ids')[0][2]
             crm_tags = self.env['crm.tag'].browse(crm_tag_ids)
