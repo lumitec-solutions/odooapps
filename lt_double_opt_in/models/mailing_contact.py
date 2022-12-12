@@ -11,12 +11,13 @@ from collections import defaultdict
 class MailingContact(models.Model):
     _inherit = 'mailing.contact'
 
+    category_ids = fields.Many2many('mailing.tag', string='Mailing Tags')
     double_opt_in = fields.Boolean(string='Double Opt-In', readonly=True,
                                    copy=False)
     can_manually_set_double_opt_in = fields.Boolean(
         "Can Manually Set Double Opt In",
         compute="_compute_can_set_double_opt_in")
-    FIELDS_TO_MERGE = ['double_opt_in', 'country_id', 'subscription_list_ids', 'title_id', 'company_name', 'tag_ids']
+    FIELDS_TO_MERGE = ['double_opt_in', 'country_id', 'subscription_list_ids', 'title_id', 'company_name', 'category_ids']
 
     def _compute_can_set_double_opt_in(self):
         for record in self:
@@ -33,7 +34,7 @@ class MailingContact(models.Model):
         if mailing_contact:
             return mailing_contact
         record = super(MailingContact, self).create(vals)
-        if record.tag_ids and record.email:
+        if record.category_ids and record.email:
             record.send_double_opt_in_email()
         return record
 
@@ -43,7 +44,7 @@ class MailingContact(models.Model):
         if 'email' in vals:
             for record in self:
                 record.double_opt_in = False
-        if 'tag_ids' in vals or 'email' in vals:
+        if 'category_ids' in vals or 'email' in vals:
             for record in self:
                 record.send_double_opt_in_email()
         return res
@@ -183,7 +184,7 @@ class MailingContact(models.Model):
             return
         conf_send_double_opt_in = self.env['ir.config_parameter'].sudo().get_param(
             'lt_double_opt_in.send_double_opt_in')
-        for tag in self.tag_ids:
+        for tag in self.category_ids:
             if tag.send_double_opt_in and conf_send_double_opt_in:
                 template = self.env.ref(
                     'lt_double_opt_in.lt_double_opt_in_email_template')

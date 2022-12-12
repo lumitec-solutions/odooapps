@@ -26,8 +26,8 @@
         'security/res_groups.xml',
         'views/res_config_settings_views.xml',
         'views/mailing_contact_token_templates.xml',
+        'views/mailing_tag_views.xml',
         'views/mailing_contact_views.xml',
-        'views/res_partner_category.xml',
 
     ],
     'installable': True,
