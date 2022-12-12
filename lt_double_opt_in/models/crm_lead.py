@@ -57,27 +57,26 @@ class Lead(models.Model):
     def write(self, vals):
         if vals:
             mailing_contact = self.env['mailing.contact'].sudo().search([('email', '=', self.email_from)])
-            mailing_contact.ensure_one()
-            if self.email_from in mailing_contact.email:
-                if vals.get('tag_ids'):
-                    crm_tag_ids = vals.get('tag_ids')[0][2]
-                    crm_tags = self.env['crm.tag'].browse(crm_tag_ids)
-                    tags = []
-                    for tag in crm_tags:
-                        tag_value_id = self.env['mailing.tag'].sudo().search([('name', '=', tag.name)])
-                        if (tag_value_id.name == tag.name) and (tag_value_id.id not in mailing_contact.category_ids.ids):
-                            tag_value = tag_value_id.id
-                            print(tags, 'ssssssssssss', tag_value)
-                            tags.append(tag_value)
-                        # for tag in crm_tags:
-                        # elif (self.env['res.partner.category'].search([('name', '=', tag.name)]).name != tag.name):
-                        #     new_tags = self.env['res.partner.category'].create({
-                        #         'name': tag.name
-                        #     })
-                        #     tags.append(new_tags.id)
-
-                    for tag in tags:
-                        mailing_contact.write({'category_ids': [(4, tag)]})
+            # if self.email_from in mailing_contact.email:
+            #     if vals.get('tag_ids'):
+            #         crm_tag_ids = vals.get('tag_ids')[0][2]
+            #         crm_tags = self.env['crm.tag'].browse(crm_tag_ids)
+            #         tags = []
+            #         for tag in crm_tags:
+            #             tag_value_id = self.env['mailing.tag'].sudo().search([('name', '=', tag.name)])
+            #             if (tag_value_id.name == tag.name) and (tag_value_id.id not in mailing_contact.category_ids.ids):
+            #                 tag_value = tag_value_id.id
+            #                 print(tags, 'ssssssssssss', tag_value)
+            #                 tags.append(tag_value)
+            #             # for tag in crm_tags:
+            #             # elif (self.env['res.partner.category'].search([('name', '=', tag.name)]).name != tag.name):
+            #             #     new_tags = self.env['res.partner.category'].create({
+            #             #         'name': tag.name
+            #             #     })
+            #             #     tags.append(new_tags.id)
+            #
+            #         for tag in tags:
+            #             mailing_contact.write({'category_ids': [(4, tag)]})
         return super(Lead, self).write(vals)
 
     # def _resolve_2many_commands(self, field_name, commands, fields=None):
