@@ -17,7 +17,7 @@ class MailingContact(models.Model):
     can_manually_set_double_opt_in = fields.Boolean(
         "Can Manually Set Double Opt In",
         compute="_compute_can_set_double_opt_in")
-    FIELDS_TO_MERGE = ['category_ids', 'double_opt_in', 'country_id']
+    FIELDS_TO_MERGE = ['double_opt_in', 'country_id', 'subscription_list_ids', 'title_id', 'company_name', 'category_ids']
 
     def _compute_can_set_double_opt_in(self):
         for record in self:
@@ -198,3 +198,48 @@ class MailingContact(models.Model):
             'action': action,
         })
         return mailing_contact_token.get_url()
+
+    def action_update_mailing_contact(self):
+        send_double_optin = self.env['ir.config_parameter'].sudo().get_param(
+            'lt_double_opt_in.send_double_opt_in')
+        if send_double_optin:
+            send_double_optin_true = True
+            self.env["ir.config_parameter"].set_param(
+                "lt_double_opt_in.send_double_opt_in", False)
+        contacts = self.env['res.partner'].search([])
+        mail_contacts = self.env['mailing.contact'].search([])
+        leads = self.env['crm.lead'].search([])
+        for contact in contacts:
+            if contact.email not in mail_contacts.mapped(lambda self: self.email):
+                mail_contacts.create({
+                    'email': contact.email if contact.email else False,
+                    'company_name': contact.parent_id.name if contact.parent_id else contact.name,
+                    'name': contact.name,
+                    'country_id': contact.country_id.id,
+                    'title_id': contact.title.id if contact.title else False,
+                    'tag_ids': contact.category_id.ids,
+                })
+        for lead in leads:
+            if lead.email_from not in mail_contacts.mapped(lambda self: self.email):
+                crm_tags = lead.tag_ids
+                tags = []
+                for tag in crm_tags:
+                    if (self.env['res.partner.category'].search([('name', '=', tag.name)]).name == tag.name):
+                        tag_value = self.env['res.partner.category'].search([('name', '=', tag.name)]).id
+                        tags.append(tag_value)
+                    elif (self.env['res.partner.category'].search([('name', '=', tag.name)]).name != tag.name):
+                        new_tags = self.env['res.partner.category'].create({
+                            'name': tag.name
+                        })
+                        tags.append(new_tags.id)
+                mail_contacts.create({
+                    'email': lead.email_from if lead.email_from else False,
+                    'company_name': lead.partner_name,
+                    'name': lead.partner_id.id,
+                    'country_id': lead.country_id.id,
+                    'tag_ids': tags
+                })
+        if send_double_optin_true:
+            self.env["ir.config_parameter"].set_param(
+                "lt_double_opt_in.send_double_opt_in", True)
+        return True

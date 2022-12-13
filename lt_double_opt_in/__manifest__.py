@@ -27,7 +27,8 @@
         'views/res_config_settings_views.xml',
         'views/mailing_contact_token_templates.xml',
         'views/mailing_tag_views.xml',
-        'views/mailing_contact_views.xml'
+        'views/mailing_contact_views.xml',
+
     ],
     'installable': True,
     'application': False,
