@@ -55,22 +55,23 @@ class Lead(models.Model):
         return super(Lead, self).create(vals)
 
     def write(self, vals):
-        mailing_contact = self.env['mailing.contact'].sudo().search([]).filtered(lambda x: self.email_from == x.email)
-        if vals.get('tag_ids'):
-            crm_tag_ids = vals.get('tag_ids')[0][2]
-            crm_tags = self.env['crm.tag'].browse(crm_tag_ids)
-            tags = []
-            for tag in crm_tags:
-                tag_value_id = self.env['mailing.tag'].sudo().search([('name', '=', tag.name)])
-                if (tag_value_id.name == tag.name) and (tag_value_id.id not in mailing_contact.category_ids.ids):
-                    tag_value = tag_value_id.id
-                    tags.append(tag_value)
-                # for tag in crm_tags:
-                # elif (self.env['res.partner.category'].search([('name', '=', tag.name)]).name != tag.name):
-                #     new_tags = self.env['res.partner.category'].create({
-                #         'name': tag.name
-                #     })
-                #     tags.append(new_tags.id)
+        for rec in self:
+            mailing_contact = self.env['mailing.contact'].sudo().search([('email', '=', rec.email_from)])
+            if vals.get('tag_ids'):
+                crm_tag_ids = vals.get('tag_ids')[0][2]
+                crm_tags = self.env['crm.tag'].browse(crm_tag_ids)
+                tags = []
+                for tag in crm_tags:
+                    tag_value_id = self.env['mailing.tag'].sudo().search([('name', '=', tag.name)])
+                    if (tag_value_id.name == tag.name) and (tag_value_id.id not in mailing_contact.category_ids.ids):
+                        tag_value = tag_value_id.id
+                        tags.append(tag_value)
+                    # for tag in crm_tags:
+                    # elif (self.env['res.partner.category'].search([('name', '=', tag.name)]).name != tag.name):
+                    #     new_tags = self.env['res.partner.category'].create({
+                    #         'name': tag.name
+                    #     })
+                    #     tags.append(new_tags.id)
 
                     for tag in tags:
                         mailing_contact.write({'category_ids': [(4, tag)]})
