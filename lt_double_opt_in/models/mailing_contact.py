@@ -208,8 +208,6 @@ class MailingContact(models.Model):
         return mailing_contact_token.get_url()
 
     def action_update_mailing_contact(self):
-        print(self.env['ir.config_parameter'].sudo().get_param(
-            'lt_double_opt_in.send_double_opt_in'), 'dddddddooooooooouuuuubbbbbbllllllllllleeeeee')
         send_double_optin = self.env['ir.config_parameter'].sudo().get_param(
             'lt_double_opt_in.send_double_opt_in')
         if send_double_optin:
@@ -249,9 +247,7 @@ class MailingContact(models.Model):
                     'country_id': lead.country_id.id,
                     'tag_ids': tags
                 })
-        print(send_double_optin_true, 'send_double_optin_true', self.env['ir.config_parameter'].sudo().get_param(
-            'lt_double_opt_in.send_double_opt_in'))
-        if send_double_optin_true:
+        if send_double_optin_true == True:
             self.env["ir.config_parameter"].set_param(
                 "lt_double_opt_in.send_double_opt_in", True)
         return True
