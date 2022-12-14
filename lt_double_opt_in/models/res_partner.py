@@ -162,7 +162,7 @@ class ResPartner(models.Model):
         # Merge new partner if it have set the merge flag and already a partner with this email exists
         if 'category_id' in vals:
             email = vals.get('email', False)
-            mailing_contact = self.env['mailing.contact'].sudo().search([])
+            mailing_contact = self.env['mailing.contact'].sudo().search([('email', '=', self.email)])
             partner_tag_ids = vals.get('category_id')[0][2]
             partner_tags = self.env['res.partner.category'].browse(partner_tag_ids)
             tags = []
@@ -209,14 +209,11 @@ class ResPartner(models.Model):
         #     if self.email == mailing_contact.email:
         #         for tag in tags:
         #             mailing_contact.write({'category_ids': [(4, tag)]})
-        mailing_contact = self.env['mailing.contact'].sudo().search([('email', '=', self.email)])
+        mailing_contact = self.env['mailing.contact'].sudo().search([('email', '=', self.email)],limit=1)
         if self.email == mailing_contact.email:
             if vals:
                 tags = []
-                print('yyyyyyyyyyyyyyyyyeeeeeeeedddddddddddd')
                 if vals.get('category_id'):
-                    print('llllllllllll',vals.get('category_id')[0][0],type(vals.get('category_id')[0][0]))
-                    # contact_tag_ids = vals.get('category_id')
                     if vals.get('category_id')[0][0] == 6:
                         contact_tag_ids = vals.get('category_id')[0][2]
                         partner_tags = self.env['res.partner.category'].browse(contact_tag_ids)
@@ -225,7 +222,7 @@ class ResPartner(models.Model):
                         print(contact_tag_ids,'contact_tag_ids')
 
                         for tag in partner_tags:
-                            tag_value_id = self.env['mailing.tag'].search([('name', '=', tag.name)])
+                            tag_value_id = self.env['mailing.tag'].sudo().search([('name', '=', tag.name)])
                             if (tag_value_id.name == tag.name) and (tag_value_id.id not in mailing_contact.category_ids.ids):
                                 tag_value = tag_value_id.id
                                 print(tags, 'ssssssssssss', tag_value)
@@ -252,7 +249,7 @@ class ResPartner(models.Model):
                     #     tags.append(new_tags.id)
 
                     for value in tags:
-                        mailing_contact.write({'category_ids': [(4, value)]})
+                        mailing_contact.update({'category_ids': [(4, value)]})
         return super(ResPartner, self).write(vals)
 
     def _resolve_2many_commands(self, field_name, commands, fields=None):

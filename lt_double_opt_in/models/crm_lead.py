@@ -73,8 +73,8 @@ class Lead(models.Model):
                     #     })
                     #     tags.append(new_tags.id)
 
-                    for tag in tags:
-                        mailing_contact.write({'category_ids': [(4, tag)]})
+                for tag in tags:
+                    mailing_contact.write({'category_ids': [(4, tag)]})
         return super(Lead, self).write(vals)
 
     # def _resolve_2many_commands(self, field_name, commands, fields=None):
