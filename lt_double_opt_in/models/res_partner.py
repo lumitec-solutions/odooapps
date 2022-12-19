@@ -18,8 +18,8 @@ class ResPartner(models.Model):
     def create(self, vals):
         # Merge new partner if it have set the merge flag and already a partner with this email exists
         if 'category_id' in vals:
-            email = vals.get('email', False)
-            mailing_contact = self.env['mailing.contact'].sudo().search([('email', '=', self.email)])
+            email = vals.get('email')
+            mailing_contact = self.env['mailing.contact'].sudo().search([('email', '=', email)])
             partner_tag_ids = vals.get('category_id')[0][2]
             partner_tags = self.env['res.partner.category'].browse(partner_tag_ids)
             tags = []
@@ -28,9 +28,9 @@ class ResPartner(models.Model):
                     tag_value = self.env['mailing.tag'].sudo().search([('name', '=', tag.name)]).id
                     tags.append(tag_value)
             company_name = self.browse(vals.get('parent_id')).name
-            if email not in mailing_contact.mapped(lambda self: self.email):
+            if email not in mailing_contact.mapped(lambda self: self.email) and (email != False):
                 self.env['mailing.contact'].sudo().create({
-                    'email': vals.get('email', False),
+                    'email': email,
                     'company_name': company_name if vals.get('parent_id') else vals.get('name'),
                     'name': vals.get('name'),
                     'country_id': self.browse(vals.get('parent_id')).country_id.id if ((vals.get('type') == 'contact') and (vals.get('company_type') == 'person')) else vals.get('country_id'),
@@ -71,8 +71,9 @@ class ResPartner(models.Model):
                             if (mail_tag.name == tag_value_id.name) and (tag[1] not in mailing_contact.tag_ids.ids):
                                 tag_value = tag_value_id.id
                                 tags.append(tag_value)
-                    for value in tags:
-                        mailing_contact.update({'category_ids': [(4, value)]})
+                for value in tags:
+                    print(value,'llllllllllllllllllllllll')
+                    mailing_contact.update({'category_ids': [(4, value)]})
         return super(ResPartner, self).write(vals)
 
     def _resolve_2many_commands(self, field_name, commands, fields=None):

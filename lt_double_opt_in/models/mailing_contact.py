@@ -18,7 +18,7 @@ class MailingContact(models.Model):
         "Can Manually Set Double Opt In",
         compute="_compute_can_set_double_opt_in")
     FIELDS_TO_MERGE = ['double_opt_in', 'country_id', 'subscription_list_ids', 'title_id', 'company_name',
-                       'category_ids', 'tag_ids']
+                       'category_ids', 'tag_ids', 'name']
 
     def _compute_can_set_double_opt_in(self):
         for record in self:
@@ -47,6 +47,8 @@ class MailingContact(models.Model):
                 record.double_opt_in = False
         if 'category_ids' in vals or 'email' in vals:
             for record in self:
+                if record.is_blacklisted:
+                    self.env["mail.blacklist"].sudo()._remove(record.email)
                 record.send_double_opt_in_email()
         return res
 

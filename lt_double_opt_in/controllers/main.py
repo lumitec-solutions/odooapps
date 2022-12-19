@@ -11,6 +11,7 @@ from dateutil.relativedelta import relativedelta
 from odoo import http, fields, _
 from odoo.http import request
 from odoo.exceptions import ValidationError
+from odoo.addons.mass_mailing.controllers.main import MassMailController
 
 _logger = logging.getLogger(__name__)
 
@@ -47,3 +48,27 @@ class MailingTokenController(http.Controller):
             return werkzeug.utils.redirect(success_page.url or '/')
         else:
             return redirect_to_double_opt_in_fail_page()
+
+class MyPatentMassMailController(MassMailController):
+
+    @http.route(['/mail/mailing/<int:mailing_id>/unsubscribe'], type='http',
+                website=True, auth='public')
+    def mailing(self, mailing_id, email=None, res_id=None, token="", **post):
+        res = super(MyPatentMassMailController, self).mailing(mailing_id,
+                                                              email,
+                                                              res_id,
+                                                              token,
+                                                              **post)
+        partner_obj = request.env['res.partner'].sudo().search(
+            [('email', '=', email)])
+        for partner in partner_obj:
+            partner.category_id = [(6, 0, [])]
+            request.env["mail.blacklist"].sudo()._add(partner.email)
+
+        mail_contact_obj = request.env['mailing.contact'].sudo().search(
+            [('email', '=', email)])
+        for contact in mail_contact_obj:
+            contact.tag_ids = [(6, 0, [])]
+            if contact.double_opt_in:
+                contact.double_opt_in = False
+        return res
