@@ -21,21 +21,24 @@ class Lead(models.Model):
             crm_tags = self.env['crm.tag'].browse(crm_tag_ids)
             for tag in crm_tags:
                 if (self.env['mailing.tag'].sudo().search([('name', '=', tag.name)]).name == tag.name):
-                    tag_value = self.env['mailing.tag'].search([('name', '=', tag.name)]).id
+                    tag_value = self.env['mailing.tag'].sudo().search([('name', '=', tag.name)]).id
                     tags.append(tag_value)
         if (email not in mailing_contact.mapped(lambda self: self.email)) and (email != False):
-            print('rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr')
             self.env['mailing.contact'].sudo().create({
                 'email': email,
                 'company_name': vals.get('partner_name'),
                 'name': vals.get('partner_id'),
                 'country_id': vals.get('country_id'),
-                'category_ids': tags
+                'category_ids': tags,
+                'lang': language.code
             })
         if (email != False) and (email == mailing_contact.email):
-            print('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq')
             for tag in tags:
                 mailing_contact.write({'category_ids': [(4, tag)]})
+            mailing_contact.update({'company_name': vals.get('partner_name'),
+                                    'country_id': vals.get('country_id'),
+                                    'lang': language.code})
+
 
             # Merge new lead if it have set the merge flag and already a lead with this email exists
             # lead = self._merge_lead_with_existing_lead(vals)
@@ -56,6 +59,14 @@ class Lead(models.Model):
                     if (tag_value_id.name == tag.name) and (tag_value_id.id not in mailing_contact.category_ids.ids):
                         tag_value = tag_value_id.id
                         tags.append(tag_value)
+            if vals.get('partner_name'):
+                mailing_contact.update({'company_name': vals.get('partner_name')})
+            if vals.get('country_id'):
+                mailing_contact.update({'country_id': vals.get('country_id')})
+            if vals.get('lang_id'):
+                language = self.env['res.lang'].browse(vals.get('lang_id'))
+                mailing_contact.update({'lang': language.code})
+
             for tag in tags:
                 mailing_contact.write({'category_ids': [(4, tag)]})
         return super(Lead, self).write(vals)

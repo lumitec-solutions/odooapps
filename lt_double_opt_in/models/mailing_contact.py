@@ -6,6 +6,7 @@
 ##############################################################################
 from odoo import api, fields, models
 from collections import defaultdict
+from odoo.addons.base.models.res_partner import _lang_get
 
 
 class MailingContact(models.Model):
@@ -17,6 +18,7 @@ class MailingContact(models.Model):
     can_manually_set_double_opt_in = fields.Boolean(
         "Can Manually Set Double Opt In",
         compute="_compute_can_set_double_opt_in")
+    lang = fields.Selection(_lang_get, string='Language')
     FIELDS_TO_MERGE = ['double_opt_in', 'country_id', 'subscription_list_ids', 'title_id', 'company_name',
                        'category_ids', 'tag_ids', 'name']
 

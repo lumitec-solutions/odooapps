@@ -36,6 +36,7 @@ class ResPartner(models.Model):
                     'country_id': self.browse(vals.get('parent_id')).country_id.id if ((vals.get('type') == 'contact') and (vals.get('company_type') == 'person')) else vals.get('country_id'),
                     'title_id': vals.get('title') if vals.get('title') else False,
                     'category_ids': tags,
+                    'lang': vals.get('lang'),
                 })
         partner = self._merge_partner_with_existing_partner(vals)
         if partner:
@@ -53,26 +54,28 @@ class ResPartner(models.Model):
                     if vals.get('category_id')[0][0] == 6:
                         contact_tag_ids = vals.get('category_id')[0][2]
                         partner_tags = self.env['res.partner.category'].browse(contact_tag_ids)
-                    # else:
-                    #     contact_tag_ids = vals.get('category_id')[0]
-                        print(contact_tag_ids,'contact_tag_ids')
-
                         for tag in partner_tags:
                             tag_value_id = self.env['mailing.tag'].sudo().search([('name', '=', tag.name)])
                             if (tag_value_id.name == tag.name) and (tag_value_id.id not in mailing_contact.category_ids.ids):
                                 tag_value = tag_value_id.id
-                                print(tags, 'ssssssssssss', tag_value)
                                 tags.append(tag_value)
                     else:
                         for tag in vals.get('category_id'):
-                            print(tag[0],'ppppp',type(tag[1]))
                             mail_tag = self.env['res.partner.category'].browse(tag[1])
                             tag_value_id = self.env['mailing.tag'].search([('name', '=', mail_tag.name)])
                             if (mail_tag.name == tag_value_id.name) and (tag[1] not in mailing_contact.tag_ids.ids):
                                 tag_value = tag_value_id.id
                                 tags.append(tag_value)
+                if vals.get('parent_id'):
+                    company_name = self.browse(vals.get('parent_id')).name
+                    mailing_contact.update({'company_name': company_name if vals.get('parent_id') else vals.get('name')})
+                if vals.get('country_id'):
+                    mailing_contact.update({'country_id': vals.get('country_id')})
+                if vals.get('title'):
+                    mailing_contact.update({'title_id': vals.get('title')})
+                if vals.get('lang'):
+                    mailing_contact.update({'lang': vals.get('lang')})
                 for value in tags:
-                    print(value,'llllllllllllllllllllllll')
                     mailing_contact.update({'category_ids': [(4, value)]})
         return super(ResPartner, self).write(vals)
 
