@@ -20,7 +20,7 @@ class MailMail(models.Model):
         mail_values = {
             'email_from': request.env.company.email_formatted,
             'reply_to': request.env.company.email_formatted,
-            'recipient_ids': email,
+            'email_to': email,
             'subject': 'subject',
             'body_html':
                 '<p>' + content + 'p',
