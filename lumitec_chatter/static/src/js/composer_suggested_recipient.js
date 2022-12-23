@@ -3,7 +3,6 @@ odoo.define('lumitec_chatter.mail_non_contact', function (require) {
 const { ComposerSuggestedRecipient } = require("@mail/components/composer_suggested_recipient/composer_suggested_recipient")
 const { Component } = owl;
 const { patch } = require('web.utils');
-console.log(ComposerSuggestedRecipient, "kkkkk")
 
 patch(ComposerSuggestedRecipient.prototype, 'ComposerSuggestedRecipientEmail',{
 
