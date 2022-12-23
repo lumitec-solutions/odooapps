@@ -23,6 +23,7 @@ class Lead(models.Model):
                 if (self.env['mailing.tag'].sudo().search([('name', '=', tag.name)]).name == tag.name):
                     tag_value = self.env['mailing.tag'].sudo().search([('name', '=', tag.name)]).id
                     tags.append(tag_value)
+        language = self.env['res.lang'].browse(vals.get('lang_id'))
         if (email not in mailing_contact.mapped(lambda self: self.email)) and (email != False):
             self.env['mailing.contact'].sudo().create({
                 'email': email,
